@@ -104,8 +104,8 @@ Try:
 
 | Tool | What it answers |
 |---|---|
-| `hydromancer_wallet_overview` | Balance, open positions (entry, liquidation price, leverage, PnL), spot balances, trading record, bot score |
-| `hydromancer_compare_wallets` | Up to 1,000 wallets in one call, sorted by size |
+| `hydromancer_wallet_overview` | Balance (correct for unified-account and portfolio-margin wallets), account mode, open positions (entry, liquidation price, leverage, PnL), spot balances, trading record, bot score |
+| `hydromancer_compare_wallets` | Up to 1,000 wallets at once, with balance and account mode, sorted by balance |
 | `hydromancer_wallet_trades` | Fills in a time window, with volume, PnL, fees and per-coin totals |
 | `hydromancer_wallet_closed_trades` | Round-trip trades: win rate, net PnL, hold time, best coin |
 | `hydromancer_wallet_open_orders` | Resting limits, stop-losses, take-profits |
@@ -113,9 +113,9 @@ Try:
 | `hydromancer_wallet_funding` | Funding paid or received, per coin |
 | `hydromancer_top_traders` | Leaderboard by profit, win rate or volume, with bot and activity filters |
 | `hydromancer_market_snapshot` | Price, 24h volume, open interest, max leverage |
-| `hydromancer_price_history` | Candles from 1 second to 1 month |
+| `hydromancer_price_history` | Candles from 1 second to 1 month (including 15s and 30s) |
 | `hydromancer_funding_history` | Funding rates, average and annualized |
-| `hydromancer_open_interest_history` | Open interest trend |
+| `hydromancer_open_interest_history` | Open interest trend, 1 minute to 1 month buckets |
 | `hydromancer_recent_liquidations` | Liquidations by market, with long/short totals |
 | `hydromancer_market_depth` | Order book depth and slippage for a trade size |
 | `hydromancer_list_markets` | Every market, HIP-3 exchanges, search by name or category |
@@ -139,6 +139,7 @@ The server also provides a `hydromancer_guide` prompt and a `hydromancer://guide
 
 - Each tool call uses your Hydromancer plan's tokens, like any API request. Check usage with `hydromancer_my_usage`.
 - Mainnet only. HIP-3 markets use a prefix, for example `xyz:TSLA`.
+- Balances: unified-account and portfolio-margin wallets keep their money in spot, so `balanceUsd` uses their spot stablecoins. Other spot tokens are listed but not priced.
 - Times are UTC. Some endpoints cap a single request (for example 2,000 fills); the tool says so when it happens.
 
 ## Development

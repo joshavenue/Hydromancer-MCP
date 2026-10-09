@@ -1,6 +1,6 @@
 {
   "name": "hydromancer-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server for the Hydromancer Hyperliquid API: ask your AI about wallets, positions, top traders, markets and liquidations in plain English",
   "type": "module",
   "license": "MIT",

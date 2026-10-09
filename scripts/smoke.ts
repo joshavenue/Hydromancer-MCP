@@ -7,12 +7,17 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const WHALE = process.env.SMOKE_ADDRESS ?? "0xde8d9e530b0528ffa7b1190f862536c055dd9524";
+const UNIFIED = "0x8923cdff38a43d1fd59d323c35b900047e431bac"; // unifiedAccount wallet with open positions
 const BUILDER = "0xe95a5e31904e005066614247d309e00d8ad753aa"; // MetaMask
 
 const calls: Array<[string, Record<string, unknown>, (text: string) => boolean]> = [
   ["hydromancer_wallet_overview", { address: WHALE }, (t) => t.includes("accountValueUsd") && t.includes("tradingRecord")],
   ["hydromancer_wallet_overview", { address: WHALE, includeHip3: true }, (t) => t.includes("native")],
-  ["hydromancer_compare_wallets", { addresses: [WHALE, "0x77ddcc4b6440b3a32b7802f053105c2fad3ae0e9"] }, (t) => t.includes('"returned": 2')],
+  ["hydromancer_wallet_overview", { address: UNIFIED }, (t) => {
+    const j = JSON.parse(t);
+    return j.accountMode === "unifiedAccount" && j.balanceUsd > j.perp.accountValueUsd;
+  }],
+  ["hydromancer_compare_wallets", { addresses: [WHALE, "0x77ddcc4b6440b3a32b7802f053105c2fad3ae0e9", UNIFIED] }, (t) => t.includes('"returned": 3') && t.includes("balanceUsd") && t.includes("unifiedAccount")],
   ["hydromancer_wallet_trades", { address: WHALE, since: "90d" }, (t) => t.includes("totals")],
   ["hydromancer_wallet_closed_trades", { address: WHALE, since: "120d" }, (t) => t.includes("winRatePct")],
   ["hydromancer_wallet_open_orders", { address: WHALE }, (t) => t.includes("openOrders")],
@@ -23,8 +28,10 @@ const calls: Array<[string, Record<string, unknown>, (text: string) => boolean]>
   ["hydromancer_market_snapshot", {}, (t) => t.includes('"coin": "BTC"')],
   ["hydromancer_market_snapshot", { coins: ["btc", "$eth", "ETH-PERP", "xyz:tsla"] }, (t) => t.includes('"coin": "ETH"') && t.includes("xyz:TSLA") && !t.includes("Unknown market")],
   ["hydromancer_price_history", { coin: "hype", interval: "1h", since: "24h" }, (t) => t.includes("changePct")],
+  ["hydromancer_price_history", { coin: "BTC", interval: "15s", since: "10m" }, (t) => t.includes('"interval": "15s"') && !t.includes('"candles": 0')],
   ["hydromancer_funding_history", { coin: "BTC", since: "3d" }, (t) => t.includes("annualizedPct")],
   ["hydromancer_open_interest_history", { coin: "ETH" }, (t) => t.includes("latestUsd")],
+  ["hydromancer_open_interest_history", { coin: "ETH", interval: "12h", since: "7d" }, (t) => t.includes("latestUsd")],
   ["hydromancer_recent_liquidations", { since: "6h" }, (t) => t.includes("longsLiquidatedUsd")],
   ["hydromancer_recent_liquidations", { coin: "btc", since: "24h", limit: 5 }, (t) => t.includes("longsLiquidatedUsd")],
   ["hydromancer_market_depth", { coin: "BTC", orderSizeUsd: 250000 }, (t) => t.includes("bidDepthUsd")],

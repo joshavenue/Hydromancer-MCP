@@ -3,7 +3,7 @@ import { HydromancerClient } from "./client.js";
 import { registerTools } from "./tools.js";
 
 export const SERVER_NAME = "hydromancer-mcp";
-export const SERVER_VERSION = "0.1.0";
+export const SERVER_VERSION = "0.2.0";
 
 export const INSTRUCTIONS =
   "Read-only Hyperliquid data from the Hydromancer API: wallets (positions, trades, closed trades, orders, transfers, funding), " +

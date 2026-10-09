@@ -82,6 +82,35 @@ function summarisePerpState(state: Obj | null): Obj {
   };
 }
 
+/* Unified-account and portfolio-margin wallets hold their money in spot; the perp
+ * accountValue then only reflects margin in open positions (or 0 with none). */
+const SPOT_BALANCE_MODES = new Set(["unifiedAccount", "portfolioMargin"]);
+const STABLECOINS = new Set(["USDC", "USDT0", "USDH", "USDE"]);
+
+function spotStablecoinsUsd(spot: Obj | null | undefined): number {
+  return (spot?.balances ?? []).reduce((s: number, b: Obj) => s + (STABLECOINS.has(b.coin) ? num(b.total) : 0), 0);
+}
+
+function perpAccountValue(chs: Obj | null | undefined): number {
+  if (!chs) return 0;
+  if (chs.marginSummary) return num(chs.marginSummary.accountValue);
+  return Object.values(chs).reduce((s: number, st) => s + num((st as Obj)?.marginSummary?.accountValue), 0);
+}
+
+/** Best single balance figure for a wallet, honest about what it covers. */
+function balanceSummary(mode: string | null | undefined, chs: Obj | null | undefined, spot: Obj | null | undefined): Obj {
+  const stables = spotStablecoinsUsd(spot);
+  const perp = perpAccountValue(chs);
+  const spotMode = SPOT_BALANCE_MODES.has(mode ?? "");
+  return {
+    accountMode: mode ?? null,
+    balanceUsd: round(spotMode ? stables : perp + stables),
+    balanceNote: spotMode
+      ? `${mode} wallet: its balance lives in spot, so this is its spot stablecoin balance (USDC, USDT0, USDH, USDE). The perp accountValue below only shows margin in open positions. Other spot tokens are listed separately and not priced.`
+      : "Perp account value plus spot stablecoins (USDC, USDT0, USDH, USDE). Other spot tokens are listed separately and not priced.",
+  };
+}
+
 function summariseFills(fills: Obj[]): Obj {
   let volume = 0, pnl = 0, fees = 0;
   const byCoin: Record<string, { fills: number; volumeUsd: number; realizedPnlUsd: number }> = {};
@@ -143,6 +172,7 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
         .map((b: Obj) => ({ token: b.coin, amount: num(b.total), onHold: num(b.hold), costBasisUsd: round(num(b.entryNtl)) }));
       return {
         address: user,
+        ...balanceSummary(portfolio?.userAbstraction, chs, portfolio?.spotClearinghouseState),
         perp,
         spotBalances: spot,
         tradingRecord: pnl && !pnl.error
@@ -160,7 +190,6 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
               marketsTraded: pnl.tradedPairs,
             }
           : (pnl ?? null),
-        accountMode: portfolio?.userAbstraction ?? null,
       };
     },
   );
@@ -168,26 +197,34 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
   add(
     "hydromancer_compare_wallets",
     "Compare many wallets at once",
-    "Look up account value and open positions for up to 1,000 wallets in one request (100 when includeHip3=true), sorted by account value. Use for watchlists: \"which of these wallets are whales?\", \"what do these 50 traders hold?\".",
+    "Look up balance, account mode and open positions for up to 1,000 wallets (100 when includeHip3=true), sorted by balance. Handles unified-account and portfolio-margin wallets, whose money sits in spot rather than perps. Use for watchlists: \"which of these wallets are whales?\", \"what do these 50 traders hold?\".",
     {
       addresses: z.array(address).min(1).max(1000).describe("Wallet addresses to look up."),
       includeHip3: z.boolean().optional().describe("Include HIP-3 markets (limit drops to 100 wallets)."),
-      minAccountValueUsd: z.number().optional().describe("Only return wallets with at least this account value."),
+      minBalanceUsd: z.number().optional().describe("Only return wallets with at least this balance (see balanceNote on each wallet)."),
     },
-    async ({ addresses, includeHip3, minAccountValueUsd }) => {
+    async ({ addresses, includeHip3, minBalanceUsd }) => {
       if (includeHip3 && addresses.length > 100) throw new Error("With includeHip3=true the limit is 100 wallets per request.");
-      const res = await client.info<Obj>({ type: "batchClearinghouseStates", users: addresses, ...(includeHip3 ? { dex: "ALL_DEXES" } : {}) });
-      const rows = (res?.successful_states ?? []).map(([addr, st]: [string, Obj]) => {
-        if (includeHip3 && st && !st.marginSummary) {
-          const parts = Object.entries(st).map(([dex, s]) => ({ dex, ...summarisePerpState(s as Obj) }));
-          const total = parts.reduce((a, p: Obj) => a + num(p.accountValueUsd), 0);
-          return { address: addr, accountValueUsd: round(total), byDex: parts.filter((p: Obj) => p.openPositions > 0) };
+      // batchPortfolioStates returns perp + spot + account mode; max 500 wallets per request, so chunk.
+      const chunks: string[][] = [];
+      for (let i = 0; i < addresses.length; i += 500) chunks.push(addresses.slice(i, i + 500));
+      const results = await Promise.all(
+        chunks.map((users) => client.info<Obj>({ type: "batchPortfolioStates", users, ...(includeHip3 ? { dex: "ALL_DEXES" } : {}) })),
+      );
+      const states = results.flatMap((r) => r?.successful_states ?? []);
+      const failed = results.flatMap((r) => r?.failed_wallets ?? []);
+      const rows = states.map(([addr, ps]: [string, Obj]) => {
+        const chs = ps?.clearinghouseState ?? null;
+        const balance = balanceSummary(ps?.userAbstraction, chs, ps?.spotClearinghouseState);
+        if (includeHip3 && chs && !chs.marginSummary) {
+          const parts = Object.entries(chs).map(([dex, s]) => ({ dex, ...summarisePerpState(s as Obj) }));
+          return { address: addr, ...balance, perpByDex: parts.filter((p: Obj) => p.openPositions > 0) };
         }
-        return { address: addr, ...summarisePerpState(st) };
+        return { address: addr, ...balance, perp: summarisePerpState(chs) };
       });
-      const filtered = rows.filter((r: Obj) => minAccountValueUsd == null || num(r.accountValueUsd) >= minAccountValueUsd);
-      filtered.sort((a: Obj, b: Obj) => num(b.accountValueUsd) - num(a.accountValueUsd));
-      return { requested: addresses.length, returned: filtered.length, failed: res?.failed_wallets ?? [], wallets: filtered };
+      const filtered = rows.filter((r: Obj) => minBalanceUsd == null || num(r.balanceUsd) >= minBalanceUsd);
+      filtered.sort((a: Obj, b: Obj) => num(b.balanceUsd) - num(a.balanceUsd));
+      return { requested: addresses.length, returned: filtered.length, failed, wallets: filtered };
     },
   );
 
@@ -440,7 +477,7 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
     `Price history as candles (open, high, low, close, volume) for any market. Intervals from 1 second to 1 month. Default: 1h candles for the last 24h. since/until accept ${timeDescription}`,
     {
       coin,
-      interval: z.enum(["1s", "1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "8h", "12h", "1d", "3d", "1w", "1M"]).optional().describe('Candle size (default "1h"). "1s" only covers about the last 30 minutes.'),
+      interval: z.enum(["1s", "15s", "30s", "1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "8h", "12h", "1d", "3d", "1w", "1M"]).optional().describe('Candle size (default "1h"). "1s" only covers about the last 30 minutes.'),
       since: timeArg.optional().describe('Default "24h".'),
       until: timeArg.optional(),
     },
@@ -496,7 +533,7 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
     "How open interest (total open positions) in a market changed over time, in coins and USD. Rising OI with rising price usually means new longs; falling OI means positions are closing. Default: hourly for the last 24h.",
     {
       coin,
-      interval: z.enum(["5m", "15m", "1h", "4h", "1d"]).optional().describe('Bucket size (default "1h").'),
+      interval: z.enum(["1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "8h", "12h", "1d", "3d", "1w", "1M"]).optional().describe('Bucket size (default "1h").'),
       since: timeArg.optional().describe('Default "24h".'),
       until: timeArg.optional(),
     },
