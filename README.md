@@ -151,6 +151,12 @@ npm test                                   # offline unit tests
 HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live API
 ```
 
+## From the Hydromancer blog
+
+Guides and research on getting and using Hyperliquid data:
+
+- [How to Build a Hyperliquid Whale Tracker (Live Positions, Fills and Alerts)](https://hydromancer.xyz/blog/hyperliquid-whale-tracker)
+
 ## License
 
 MIT
