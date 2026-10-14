@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [Hyperliquid API Guide: Endpoints, API Keys, Limits and Python Examples](https://hydromancer.xyz/blog/hyperliquid-api)
 - [Top Prop Firms on Hyperliquid: Side-by-Side Comparison](https://hydromancer.xyz/blog/prop-firms-on-hyperliquid)
 - [How to Build with Liquidation Data from Hyperliquid](https://hydromancer.xyz/blog/build-with-liquidation-data-on-hyperliquid)
 - [How to Build a Hyperliquid Whale Tracker (Live Positions, Fills and Alerts)](https://hydromancer.xyz/blog/hyperliquid-whale-tracker)
