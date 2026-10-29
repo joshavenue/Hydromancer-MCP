@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [How to Build a Hyperliquid Orderbook Heatmap](https://hydromancer.xyz/blog/hyperliquid-order-book-heatmap)
 - [Hyperliquid Vaults API: Track Performance and Depositors](https://hydromancer.xyz/blog/hyperliquid-vaults)
 - [How to Get a Hyperliquid Wallet's Trade History (API + Bulk)](https://hydromancer.xyz/blog/hyperliquid-trade-history)
 - [Hyperliquid Funding Rates: How They Work and its History](https://hydromancer.xyz/blog/hyperliquid-funding-rates)
