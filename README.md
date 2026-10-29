@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [Hyperliquid Fees and Revenue: A Guide for Builders](https://hydromancer.xyz/blog/hyperliquid-fees)
 - [HyperCore vs HyperEVM: Is Hyperliquid an L1 or L2?](https://hydromancer.xyz/blog/hypercore-vs-hyperevm)
 - [Hyperliquid Tick Size and Lot Size: Round Prices and Sizes](https://hydromancer.xyz/blog/hyperliquid-tick-size)
 - [How to Build a Hyperliquid Orderbook Heatmap](https://hydromancer.xyz/blog/hyperliquid-order-book-heatmap)
