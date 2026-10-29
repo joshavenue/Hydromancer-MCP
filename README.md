@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [Hyperliquid Funding Rates: How They Work and its History](https://hydromancer.xyz/blog/hyperliquid-funding-rates)
 - [How to Build a Hyperliquid Copy Trading Bot](https://hydromancer.xyz/blog/hyperliquid-copy-trading-bot)
 - [How to Build a Hyperliquid Trading Bot](https://hydromancer.xyz/blog/hyperliquid-trading-bot)
 - [Hyperliquid Leaderboard: How to Track Top Addresses' PnL](https://hydromancer.xyz/blog/hyperliquid-leaderboard)
