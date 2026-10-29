@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [How to Read Hydromancer's Live Stats Page](https://hydromancer.xyz/blog/hydromancer-live-stats)
 - [Hyperliquid Rate Limits: What is it & Solution](https://hydromancer.xyz/blog/hyperliquid-rate-limits)
 - [Top HIP-3 Market Deployers by the Numbers](https://hydromancer.xyz/blog/top-hip-3-market-deployers)
 - [Hyperliquid API Guide: Endpoints, API Keys, Limits and Python Examples](https://hydromancer.xyz/blog/hyperliquid-api)
