@@ -155,6 +155,7 @@ HYDROMANCER_API_KEY=... npm run smoke      # calls every tool against the live A
 
 Guides and research on getting and using Hyperliquid data:
 
+- [Hyperliquid vs Hydromancer API: When to Upgrade?](https://hydromancer.xyz/blog/hyperliquid-vs-hydromancer-api)
 - [How to View Entire Trader Positioning on Hyperliquid](https://hydromancer.xyz/blog/hyperliquid-trader-positioning)
 - [How to Find a Reliable Peer for Your Hyperliquid Node](https://hydromancer.xyz/blog/reliable-hyperliquid-node-peer)
 - [Hyperliquid Builder Codes: How They Work and How to Track Fees](https://hydromancer.xyz/blog/hyperliquid-builder-codes)
