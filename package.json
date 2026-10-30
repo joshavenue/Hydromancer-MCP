@@ -4,6 +4,23 @@
   "description": "MCP server for the Hydromancer Hyperliquid API: ask your AI about wallets, positions, top traders, markets and liquidations in plain English",
   "type": "module",
   "license": "MIT",
+  "author": "Hydromancer",
+  "homepage": "https://hydromancer.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshavenue/Hydromancer-MCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joshavenue/Hydromancer-MCP/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "hyperliquid",
+    "hydromancer",
+    "trading-data",
+    "ai-tools"
+  ],
   "bin": {
     "hydromancer-mcp": "dist/index.js"
   },

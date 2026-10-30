@@ -2,6 +2,8 @@
 
 Ask your AI about Hyperliquid in plain English, using live data from the [Hydromancer API](https://hydromancer.xyz).
 
+> **Disclosure:** this package is maintained by the Hydromancer team. You need a Hydromancer API key to use it.
+
 > "What is this wallet holding, and is it a good trader?"
 > "Who were the best traders this week, without bots?"
 > "Who got liquidated in the last 6 hours?"
@@ -32,7 +34,7 @@ Settings → Developer → Edit Config, then add:
   "mcpServers": {
     "hydromancer": {
       "command": "npx",
-      "args": ["-y", "github:joshavenue/Hydromancer-MCP"],
+      "args": ["-y", "hydromancer-mcp"],
       "env": { "HYDROMANCER_API_KEY": "YOUR_KEY" }
     }
   }
@@ -44,7 +46,7 @@ Restart Claude Desktop.
 ### Claude Code
 
 ```bash
-claude mcp add hydromancer -e HYDROMANCER_API_KEY=YOUR_KEY -- npx -y github:joshavenue/Hydromancer-MCP
+claude mcp add hydromancer -e HYDROMANCER_API_KEY=YOUR_KEY -- npx -y hydromancer-mcp
 ```
 
 ### Cursor
@@ -58,7 +60,7 @@ claude mcp add hydromancer -e HYDROMANCER_API_KEY=YOUR_KEY -- npx -y github:josh
 ```toml
 [mcp_servers.hydromancer]
 command = "npx"
-args = ["-y", "github:joshavenue/Hydromancer-MCP"]
+args = ["-y", "hydromancer-mcp"]
 env = { HYDROMANCER_API_KEY = "YOUR_KEY" }
 ```
 
@@ -71,7 +73,7 @@ env = { HYDROMANCER_API_KEY = "YOUR_KEY" }
   "servers": {
     "hydromancer": {
       "command": "npx",
-      "args": ["-y", "github:joshavenue/Hydromancer-MCP"],
+      "args": ["-y", "hydromancer-mcp"],
       "env": { "HYDROMANCER_API_KEY": "YOUR_KEY" }
     }
   }
