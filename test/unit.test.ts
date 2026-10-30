@@ -52,6 +52,9 @@ describe("key safety", () => {
       "http://api.hydromancer.xyz/info",
       "https://evil.example/info",
       "https://api.hydromancer.xyz.evil.example/info",
+      "https://api.hydromancer.xyz@evil.example/info",
+      "https://evil.example\\@api.hydromancer.xyz/info",
+      "https://evil.example#@api.hydromancer.xyz/info",
       "https://docs.hydromancer.xyz/info",
       "https://user:pw@api.hydromancer.xyz/info",
       "https://api.hydromancer.xyz:8443/info",
@@ -76,6 +79,25 @@ describe("key safety", () => {
   it("refuses a key with stray characters without echoing it", async () => {
     const client = new HydromancerClient({ apiKey: "abc\ndef-secret", fetchImpl: ok });
     await assert.rejects(client.info({ type: "x" }), (err: Error) => !err.message.includes("def-secret"));
+  });
+
+  it("refuses redirects", async () => {
+    let init: RequestInit | undefined;
+    const fetchImpl = (async (_url: string, options: RequestInit) => {
+      init = options;
+      return new Response("[]");
+    }) as unknown as typeof fetch;
+    await new HydromancerClient({ apiKey: "abc", fetchImpl }).info({ type: "x" });
+    assert.equal(init?.redirect, "error");
+  });
+
+  it("masks the key when the server echoes it", async () => {
+    const reply = (status: number, body: string) =>
+      (async () => new Response(body, { status })) as unknown as typeof fetch;
+    const failed = new HydromancerClient({ apiKey: "abc-secret", fetchImpl: reply(500, "echo abc-secret") });
+    await assert.rejects(failed.info({ type: "x" }), (err: Error) => !err.message.includes("abc-secret"));
+    const worked = new HydromancerClient({ apiKey: "abc-secret", fetchImpl: reply(200, '{"key":"abc-secret"}') });
+    assert.deepEqual(await worked.info({ type: "x" }), { key: "***" });
   });
 
   it("masks the key in network errors", async () => {

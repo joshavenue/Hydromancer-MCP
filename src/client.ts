@@ -45,6 +45,11 @@ export function resolveBaseUrl(raw: string): string {
   return `https://${url.hostname}/info`;
 }
 
+/** Hide the key, plain or JSON-escaped, in text from outside this process. */
+function maskKey(text: string, apiKey: string): string {
+  return text.replaceAll(apiKey, "***").replaceAll(JSON.stringify(apiKey).slice(1, -1), "***");
+}
+
 export class HydromancerClient {
   private readonly apiKey: string | undefined;
   private readonly baseUrl: string;
@@ -96,9 +101,9 @@ export class HydromancerClient {
       if (e.name === "TimeoutError" || e.name === "AbortError") {
         throw new HydromancerError(`Hydromancer did not answer within ${this.timeoutMs / 1000}s. Try a shorter time range or a smaller limit.`);
       }
-      throw new HydromancerError(`Could not reach Hydromancer (${e.message.replaceAll(apiKey, "***")}). Check the internet connection.`);
+      throw new HydromancerError(`Could not reach Hydromancer (${maskKey(e.message, apiKey)}). Check the internet connection.`);
     }
-    const text = await res.text();
+    const text = maskKey(await res.text(), apiKey);
     if (!res.ok) throw new HydromancerError(explainStatus(res.status, text, clean.type as string), res.status);
     if (text.trim() === "" || text.trim() === "null") return null as T;
     try {
