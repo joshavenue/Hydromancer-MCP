@@ -47,6 +47,8 @@ export function resolveBaseUrl(raw: string): string {
 
 /** Hide the key, plain or JSON-escaped, in text from outside this process. */
 function maskKey(text: string, apiKey: string): string {
+  // A key this short can't be real, and masking it would scramble normal responses.
+  if (apiKey.length < 8) return text;
   return text.replaceAll(apiKey, "***").replaceAll(JSON.stringify(apiKey).slice(1, -1), "***");
 }
 

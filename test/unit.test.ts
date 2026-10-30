@@ -100,6 +100,12 @@ describe("key safety", () => {
     assert.deepEqual(await worked.info({ type: "x" }), { key: "***" });
   });
 
+  it("leaves responses alone for a key too short to be real", async () => {
+    const fetchImpl = (async () => new Response('{"data":"value"}')) as unknown as typeof fetch;
+    const client = new HydromancerClient({ apiKey: "a", fetchImpl });
+    assert.deepEqual(await client.info({ type: "x" }), { data: "value" });
+  });
+
   it("masks the key in network errors", async () => {
     const fetchImpl = (async () => {
       throw new Error("failed with abc-secret");
