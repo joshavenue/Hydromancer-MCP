@@ -23,7 +23,7 @@ export const GUIDE_MD = `# Hydromancer MCP: which tool to use
 | Funding a wallet paid or received | hydromancer_wallet_funding |
 | Many wallets at once (watchlist, whales) | hydromancer_compare_wallets |
 | Best traders this week/month, without bots | hydromancer_top_traders |
-| Price, volume, open interest, funding now | hydromancer_market_snapshot |
+| Price, volume, open interest now | hydromancer_market_snapshot |
 | Price chart data | hydromancer_price_history |
 | Funding rate history | hydromancer_funding_history |
 | Open interest trend | hydromancer_open_interest_history |

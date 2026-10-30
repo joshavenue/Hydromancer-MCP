@@ -4,8 +4,9 @@
  */
 
 export const DEFAULT_BASE_URL = "https://api.hydromancer.xyz/info";
+const ALLOWED_HOSTS = new Set(["api.hydromancer.xyz", "api-testnet.hydromancer.xyz"]);
 // Cloudflare in front of the API rejects default library user agents (error 1010).
-const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36 hydromancer-mcp/0.1.0";
+const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36 hydromancer-mcp/0.2.0";
 
 export class HydromancerError extends Error {
   constructor(message: string, readonly status?: number) {
@@ -21,6 +22,27 @@ export interface ClientOptions {
   baseUrl?: string;
   timeoutMs?: number;
   fetchImpl?: typeof fetch;
+}
+
+/** Only HTTPS Hydromancer API hosts are accepted, so the key can never be sent anywhere else. */
+export function resolveBaseUrl(raw: string): string {
+  const refused = new HydromancerError(
+    "HYDROMANCER_BASE_URL must be https://api.hydromancer.xyz/info or https://api-testnet.hydromancer.xyz/info. " +
+      "Other hosts are refused so your API key stays private.",
+  );
+  let url: URL;
+  try {
+    url = new URL(raw.trim());
+  } catch {
+    throw refused;
+  }
+  const path = url.pathname.replace(/\/+$/, "");
+  const clean = !url.username && !url.password && !url.search && !url.hash;
+  const port = url.port === "" || url.port === "443";
+  if (url.protocol !== "https:" || !ALLOWED_HOSTS.has(url.hostname) || !port || !clean || (path !== "" && path !== "/info")) {
+    throw refused;
+  }
+  return `https://${url.hostname}/info`;
 }
 
 export class HydromancerClient {
@@ -47,19 +69,26 @@ export class HydromancerClient {
           "(get a key at https://docs.hydromancer.xyz/readme/get-api-keys), then restart your AI app.",
       );
     }
+    const baseUrl = resolveBaseUrl(this.baseUrl);
+    const apiKey = this.apiKey!.trim();
+    // A key with stray characters would be echoed in fetch's own error text.
+    if (!/^[\x21-\x7E]+$/.test(apiKey)) {
+      throw new HydromancerError("HYDROMANCER_API_KEY has invalid characters. Copy it again and restart your AI app.");
+    }
     // Drop undefined fields so optional parameters are simply omitted.
     const clean = Object.fromEntries(Object.entries(body).filter(([, v]) => v !== undefined));
     let res: Response;
     try {
-      res = await this.fetchImpl(this.baseUrl, {
+      res = await this.fetchImpl(baseUrl, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${this.apiKey!.trim()}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
           Accept: "application/json",
           "User-Agent": USER_AGENT,
         },
         body: JSON.stringify(clean),
+        redirect: "error",
         signal: AbortSignal.timeout(this.timeoutMs),
       });
     } catch (err) {
@@ -67,7 +96,7 @@ export class HydromancerClient {
       if (e.name === "TimeoutError" || e.name === "AbortError") {
         throw new HydromancerError(`Hydromancer did not answer within ${this.timeoutMs / 1000}s. Try a shorter time range or a smaller limit.`);
       }
-      throw new HydromancerError(`Could not reach Hydromancer (${e.message}). Check the internet connection.`);
+      throw new HydromancerError(`Could not reach Hydromancer (${e.message.replaceAll(apiKey, "***")}). Check the internet connection.`);
     }
     const text = await res.text();
     if (!res.ok) throw new HydromancerError(explainStatus(res.status, text, clean.type as string), res.status);

@@ -15,7 +15,7 @@ Your AI picks the right tool, calls Hydromancer and explains the answer. You don
 - **Works with any MCP app**: Claude Desktop, Claude Code, Cursor, Codex, VS Code (Copilot), Gemini CLI, Windsurf, Cline and others
 - **Friendly inputs**: coin names in any case (`btc`, `$ETH`, `ETH-PERP`, `xyz:tsla`), times like `24h`, `7d` or `2026-10-01`
 - **Safe**: read-only. It cannot place, cancel or sign orders, and it never touches funds or private keys
-- **Your key stays local**: it is read from your app's settings and never sent anywhere except `api.hydromancer.xyz`
+- **Your key stays local**: it is read from your app's settings and never sent anywhere except `api.hydromancer.xyz` (or `api-testnet.hydromancer.xyz` if you set it)
 
 ## 1. Get a Hydromancer API key
 
@@ -100,7 +100,7 @@ Try:
 - `BTC, ETH and HYPE: price, 24h volume and open interest.`
 - `Has ETH open interest been rising or falling today?`
 - `What's the BTC funding rate averaged over the last week, annualized?`
-- `How much did MetaMask's builder earn in fees in the last hour?`
+- `How much did builder 0x… earn in fees in the last hour?`
 
 ## Tools
 
@@ -114,7 +114,7 @@ Try:
 | `hydromancer_wallet_transfers` | Deposits, withdrawals, sends, vault moves, liquidations |
 | `hydromancer_wallet_funding` | Funding paid or received, per coin |
 | `hydromancer_top_traders` | Leaderboard by profit, win rate or volume, with bot and activity filters |
-| `hydromancer_market_snapshot` | Price, 24h volume, open interest, max leverage |
+| `hydromancer_market_snapshot` | Price, 24h volume and open interest (max leverage in the top-markets list) |
 | `hydromancer_price_history` | Candles from 1 second to 1 month (including 15s and 30s) |
 | `hydromancer_funding_history` | Funding rates, average and annualized |
 | `hydromancer_open_interest_history` | Open interest trend, 1 minute to 1 month buckets |
@@ -133,7 +133,7 @@ The server also provides a `hydromancer_guide` prompt and a `hydromancer://guide
 | Variable | Default | Purpose |
 |---|---|---|
 | `HYDROMANCER_API_KEY` | (required) | Your API key |
-| `HYDROMANCER_BASE_URL` | `https://api.hydromancer.xyz/info` | API endpoint |
+| `HYDROMANCER_BASE_URL` | `https://api.hydromancer.xyz/info` | API endpoint. Only the mainnet and testnet Hydromancer hosts are accepted. |
 | `HYDROMANCER_TIMEOUT_MS` | `30000` | Request timeout |
 | `HYDROMANCER_MAX_RESULT_CHARS` | `40000` | Cap on one tool result, so the AI is not flooded |
 

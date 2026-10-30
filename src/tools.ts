@@ -429,8 +429,8 @@ export function registerTools(server: McpServer, client: HydromancerClient): str
   // ---------- Markets ----------
   add(
     "hydromancer_market_snapshot",
-    "Live price, volume, open interest and funding for markets",
-    "Current mark/oracle/mid price, 24h volume, open interest (in coins and USD) and max leverage for one or more markets. Leave coins empty for the top markets by 24h volume. Works for HIP-3 markets (e.g. \"xyz:TSLA\").",
+    "Live price, volume and open interest for markets",
+    "Current mark/oracle/mid price, 24h volume and open interest (in coins and USD) for one or more markets. The top-markets list also shows max leverage. Leave coins empty for the top markets by 24h volume. Works for HIP-3 markets (e.g. \"xyz:TSLA\").",
     {
       coins: z.array(z.string()).max(20).optional().describe('Markets to show, e.g. ["BTC","ETH","xyz:TSLA"]. Omit for the busiest markets.'),
       top: z.number().int().min(1).max(100).optional().describe("When coins is empty, how many top markets by 24h volume (default 15)."),
