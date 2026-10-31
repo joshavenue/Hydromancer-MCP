@@ -6,7 +6,7 @@
 export const DEFAULT_BASE_URL = "https://api.hydromancer.xyz/info";
 const ALLOWED_HOSTS = new Set(["api.hydromancer.xyz", "api-testnet.hydromancer.xyz"]);
 // Cloudflare in front of the API rejects default library user agents (error 1010).
-const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36 hydromancer-mcp/0.2.0";
+const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36 hydromancer-mcp/0.2.1";
 
 export class HydromancerError extends Error {
   constructor(message: string, readonly status?: number) {

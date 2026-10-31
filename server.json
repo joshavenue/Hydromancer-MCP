@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.joshavenue/hydromancer-mcp",
+  "title": "Hydromancer",
+  "description": "Read-only Hyperliquid data: wallets, top traders, markets, funding and liquidations.",
+  "websiteUrl": "https://hydromancer.xyz",
+  "repository": {
+    "url": "https://github.com/joshavenue/Hydromancer-MCP",
+    "source": "github"
+  },
+  "version": "0.2.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "hydromancer-mcp",
+      "version": "0.2.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HYDROMANCER_API_KEY",
+          "description": "Your Hydromancer API key: https://docs.hydromancer.xyz/readme/get-api-keys",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
