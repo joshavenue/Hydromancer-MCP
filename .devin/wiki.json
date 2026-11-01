@@ -1,0 +1,109 @@
+{
+  "repo_notes": [
+    {
+      "content": "Hydromancer's website is https://hydromancer.xyz and its API docs are at https://docs.hydromancer.xyz. When the wiki refers to the product or its documentation, use these URLs as Markdown links. Keep the wiki factual and technical, with no marketing language."
+    }
+  ],
+  "pages": [
+    {
+      "title": "Overview",
+      "purpose": "What Hydromancer MCP is: a read-only MCP server bridging AI clients to the Hydromancer Hyperliquid API. Architecture at a glance, repo layout, links to child pages.",
+      "page_notes": [
+        {
+          "content": "Near the top of this page, include this sentence as written, keeping its Markdown links: \"This server reads from the API of [Hydromancer](https://hydromancer.xyz), a Hyperliquid data provider. See the [Hydromancer docs](https://docs.hydromancer.xyz) for API details.\""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started & Client Configuration",
+      "purpose": "Install/run via npx or dist/index.js, environment variables, and MCP client config snippets for Claude Desktop, Claude Code, Cursor, VS Code, Codex; server.json manifest.",
+      "parent": "Overview",
+      "page_notes": [
+        {
+          "content": "Where the API key is mentioned, link to [Get API keys](https://docs.hydromancer.xyz/readme/get-api-keys)."
+        }
+      ]
+    },
+    {
+      "title": "CLI Entrypoint and Process Lifecycle",
+      "purpose": "src/index.ts: argument handling (--help/--version), stdout protocol safety, stdio transport connection, signal handling and fatal error paths.",
+      "parent": "Overview"
+    },
+    {
+      "title": "MCP Server Core",
+      "purpose": "How the MCP server is assembled: metadata, instructions, guide prompt/resource, tool registration. Links to child pages."
+    },
+    {
+      "title": "Server Factory, Instructions and Guide",
+      "purpose": "createServer, SERVER_NAME/VERSION, INSTRUCTIONS, GUIDE_MD, hydromancer_guide prompt and hydromancer://guide resource.",
+      "parent": "MCP Server Core"
+    },
+    {
+      "title": "Tool Catalog",
+      "purpose": "Overview of registerTools and the 19 read-only tools, their Zod schemas and common response shape. Links to grouped tool pages.",
+      "parent": "MCP Server Core"
+    },
+    {
+      "title": "Wallet & Trader Tools",
+      "purpose": "wallet_overview, compare_wallets, wallet_trades, closed_trades, open_orders, transfers, funding, top_traders — arguments, summarisation helpers, clearinghouse state and account modes.",
+      "parent": "MCP Server Core"
+    },
+    {
+      "title": "Market Data Tools",
+      "purpose": "market_snapshot, price_history, funding_history, open_interest_history, recent_liquidations, market_depth, list_markets, builder_activity, prediction_markets.",
+      "parent": "MCP Server Core"
+    },
+    {
+      "title": "Utility & Escape-Hatch Tools",
+      "purpose": "hydromancer_my_usage and hydromancer_raw_request: direct /info passthrough, quota reporting, and their risks/limits.",
+      "parent": "MCP Server Core"
+    },
+    {
+      "title": "API Client & Supporting Libraries",
+      "purpose": "The HTTP client and the helper modules for input normalisation and output shaping. Links to child pages."
+    },
+    {
+      "title": "HydromancerClient and Request Pipeline",
+      "purpose": "ClientOptions, info(), headers/user-agent, timeouts, JSON parsing, HydromancerError and explainStatus mapping.",
+      "parent": "API Client & Supporting Libraries"
+    },
+    {
+      "title": "Security Model: URL Allowlist and Key Masking",
+      "purpose": "resolveBaseUrl SSRF defenses, https/port/path constraints, API key validation, maskKey scrubbing, redirect:error, read-only guarantee.",
+      "parent": "API Client & Supporting Libraries"
+    },
+    {
+      "title": "Input Normalisation: Time and Coin Resolution",
+      "purpose": "src/time.ts parseTime/iso relative-span grammar and epoch normalisation; src/coins.ts allMids-backed cached coin name resolution including HIP-3 prefixes.",
+      "parent": "API Client & Supporting Libraries"
+    },
+    {
+      "title": "Result Shaping and Context Budget",
+      "purpose": "src/shape.ts: ok/fail ToolResult envelopes, page() pagination, MAX_RESULT_CHARS truncation notes, num/round helpers.",
+      "parent": "API Client & Supporting Libraries"
+    },
+    {
+      "title": "Build, Testing and Tooling",
+      "purpose": "How the project is built, typechecked, tested and released. Links to child pages."
+    },
+    {
+      "title": "Build Pipeline and Packaging",
+      "purpose": "package.json scripts, tsconfig compiler settings, dist/index.js chmod, bin mapping, published files, dependency graph from package-lock.json, LICENSE.",
+      "parent": "Build, Testing and Tooling"
+    },
+    {
+      "title": "Unit Tests",
+      "purpose": "test/unit.test.ts: node:test via tsx, fake fetchImpl patterns, URL rejection cases, key masking and body sanitisation assertions, parseTime cases.",
+      "parent": "Build, Testing and Tooling"
+    },
+    {
+      "title": "Smoke and Peek Scripts",
+      "purpose": "scripts/smoke.ts live end-to-end validation of all tools plus negative tests and readOnlyHint checks; scripts/peek.ts single-tool debugging harness.",
+      "parent": "Build, Testing and Tooling"
+    },
+    {
+      "title": "Glossary",
+      "purpose": "Definitions of MCP, stdio transport, Hyperliquid/Hydromancer domain terms (HIP-3, HIP-4, fills, clearinghouse state, unified account, portfolio margin, bot/human score, builder code, funding rate, open interest, liquidation, market depth/slippage) with code pointers."
+    }
+  ]
+}
