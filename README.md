@@ -19,7 +19,7 @@ Your AI picks the right tool, calls Hydromancer and explains the answer. You don
 
 ## 1. Get a Hydromancer API key
 
-See [Get API keys](https://docs.hydromancer.xyz/readme/get-api-keys). Early-stage teams [may qualify for free access](https://docs.hydromancer.xyz/readme/hydromancer-for-early-stage-teams).
+See [Get API keys](https://hydromancer.xyz/docs/get-api-keys). Early-stage teams [may qualify for free access](https://hydromancer.xyz/docs/welcome-to-hydromancer/hydromancer-for-early-stage-teams).
 
 ## 2. Add it to your AI app
 
@@ -160,7 +160,7 @@ Guides and research on getting and using Hyperliquid data:
 - [How to Query Reservoir's Hyperliquid Data](https://hydromancer.xyz/blog/exploring-reservoir)
 - [Hyperliquid vs Hydromancer API: When to Upgrade?](https://hydromancer.xyz/blog/hyperliquid-vs-hydromancer-api)
 - [How to View Entire Trader Positioning on Hyperliquid](https://hydromancer.xyz/blog/hyperliquid-trader-positioning)
-- [How to Find a Reliable Peer for Your Hyperliquid Node](https://hydromancer.xyz/blog/reliable-hyperliquid-node-peer)
+- [Hyperliquid Node Peering](https://hydromancer.xyz/hyperliquid-node-peering)
 - [Hyperliquid Builder Codes: How They Work and How to Track Fees](https://hydromancer.xyz/blog/hyperliquid-builder-codes)
 - [Hyperliquid Testnet Guide: Faucets, API URLs and Mainnet Gotchas](https://hydromancer.xyz/blog/hyperliquid-testnet)
 - [Hyperliquid Fees and Revenue: A Guide for Builders](https://hydromancer.xyz/blog/hyperliquid-fees)
